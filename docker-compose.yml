@@ -2,36 +2,45 @@ services:
   faq-assist-api:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: api/Dockerfile
     container_name: faq-assist-api
     ports:
-      - 8686:8000
-    volumes:
-      - .:/app
-    env_file:
-      - .env
+      - "8686:8000"
     environment:
+      - MCP_SERVER_URL=http://faq-assist-mcp:8000/sse
       - NEO4J_URI=bolt://faq-assist-neo4j:7687
-      - NEO4J_USER=${NEO4J_USER:-neo4j}
-      - NEO4J_PASSWORD=${NEO4J_PASSWORD:-neo4jpassword}
-      - REDIS_HOST=faq-assist-redis
-      - REDIS_PORT=6379
+      - REDIS_URL=redis://:password@faq-assist-redis:6379/0
     depends_on:
-      - faq-assist-neo4j
-      - faq-assist-redis
+      faq-assist-mcp:
+        condition: service_started
+      faq-assist-neo4j:
+        condition: service_healthy
+    networks:
+      - faq-assist-network
+
+  faq-assist-mcp:
+    build:
+      context: .
+      dockerfile: mcp_server/Dockerfile
+    container_name: faq-assist-mcp
+    command: [ "fastmcp", "run", "server.py", "--transport", "sse", "--host", "0.0.0.0", "--port", "8000" ]
     networks:
       - faq-assist-network
 
   faq-assist-neo4j:
     image: neo4j:5
     container_name: faq-assist-neo4j
+    ports:
+      - "7474:7474"
+      - "7687:7687"
     environment:
       NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-neo4jpassword}
-    ports:
-      - 7474:7474
-      - 7687:7687
-    volumes:
-      - neo4j_data:/data
+      NEO4J_PLUGINS: '["apoc"]'
+    healthcheck:
+      test: [ "CMD", "cypher-shell", "-u", "neo4j", "-p", "${NEO4J_PASSWORD:-neo4jpassword}", "RETURN 1" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     networks:
       - faq-assist-network
 
