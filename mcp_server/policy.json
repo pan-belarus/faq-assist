@@ -1,0 +1,36 @@
+{
+  "version": "1.0",
+  "metadata": {
+    "service": "website-assistant-mcp",
+    "description": "AI Assist Access Control Policy for Website Assistant MCP"
+  },
+  "access_control": {
+    "roles": {
+      "assistant": {
+        "allowed_tools": [
+          "get_company_info",
+          "search_documentation",
+          "send_support_ticket"
+        ],
+        "denied_tools": [
+          "delete_user",
+          "access_raw_db",
+          "modify_config"
+        ],
+        "file_system": {
+          "read": ["/app/public/docs/*.md"],
+          "write": ["/app/logs/tickets/"],
+          "forbidden": ["/etc/", "/app/api/.env", "/app/company.crt"]
+        }
+      }
+    },
+    "rate_limits": {
+      "max_requests_per_minute": 10,
+      "max_tokens_per_call": 1000
+    }
+  },
+  "security_settings": {
+    "require_approval_for_destructive_actions": true,
+    "log_all_tool_calls": true
+  }
+}
