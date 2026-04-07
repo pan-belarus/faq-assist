@@ -26,3 +26,8 @@ curl -X POST "http://localhost:8686/messages/?session_id=6f56c1596e34473485fc05c
     "arguments": {}
   }
 }'
+
+### Frontend
+```cmd
+npx create-next-app@latest frontend --typescript --tailwind --eslint --app
+```

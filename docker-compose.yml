@@ -27,6 +27,20 @@ services:
     networks:
       - faq-assist-network
 
+  faq-assist-ui:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: faq-assist-ui
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8686
+    depends_on:
+      - faq-assist-api
+    networks:
+      - faq-assist-network
+
   faq-assist-neo4j:
     image: neo4j:5
     container_name: faq-assist-neo4j
