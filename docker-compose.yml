@@ -6,6 +6,8 @@ services:
     container_name: faq-assist-api
     ports:
       - "8686:8000"
+    env_file:
+      - .env
     environment:
       - MCP_SERVER_URL=http://faq-assist-mcp:8000/sse
       - NEO4J_URI=bolt://faq-assist-neo4j:7687
@@ -40,6 +42,10 @@ services:
       - faq-assist-api
     networks:
       - faq-assist-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - /app/.next
 
   faq-assist-neo4j:
     image: neo4j:5

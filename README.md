@@ -15,19 +15,39 @@ DOCKER_BUILDKIT=0 docker-compose up -d
 DOCKER_BUILDKIT=0 docker-compose up --build faq-assist-api
 ```
 
-curl -X POST "http://localhost:8686/messages/?session_id=6f56c1596e34473485fc05c30c3ae764" \
--H "Content-Type: application/json" \
--d '{
-  "jsonrpc": "2.0",
-  "id": 1,
-  "method": "tools/call",
-  "params": {
-    "name": "hello",
-    "arguments": {}
-  }
-}'
+### The health check
+```cmd
+curl -X GET  http://0.0.0.0:8686/health
+```
 
-### Frontend
+### Frontend: create the Next.js app with Tailwind CSS, TypeScript, ESLint, and the App Router:
 ```cmd
 npx create-next-app@latest frontend --typescript --tailwind --eslint --app
 ```
+
+### Check the API code
+```cmd
+docker exec -it faq-assist-api black --check .
+docker exec -it faq-assist-api ruff check .
+
+docker exec -u root -it faq-assist-api apt-get update
+docker exec -u root -it faq-assist-api apt-get install -y git
+docker exec -it faq-assist-api isort . --check-only
+```
+### Fix the API code
+```cmd
+docker exec -it faq-assist-api black .
+docker exec -it faq-assist-api ruff check .
+docker exec -it faq-assist-api isort .
+```
+
+### Check the frontend code
+```cmd
+docker exec -it faq-assist-ui npx prettier --check "app/**/*.{ts,tsx}"
+```
+
+### Fix the frontend code
+```cmd
+docker exec -it faq-assist-ui npx prettier --write "app/**/*.{ts,tsx}"
+```
+

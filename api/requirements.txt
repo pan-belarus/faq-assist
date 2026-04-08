@@ -2,9 +2,11 @@
 python-dotenv
 pydantic-settings
 fastapi
-fastmcp
+langchain
+langchain-anthropic
+langgraph
+pydantic
 python-multipart
-sqlalchemy
 asyncpg
 psycopg2-binary
 psycopg
@@ -15,8 +17,6 @@ greenlet
 bcrypt
 redis
 fakeredis
-alembic
-chromadb
 neo4j
 mcp
 
